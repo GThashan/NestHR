@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client'; 
 import { PrismaService } from 'src/prisma/prisma.service';  
 
@@ -15,10 +15,10 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  getUserById(iD: number) { 
-    return this.prisma.user.findUnique({
-      where: { iD },
-    });
+  async getUserById(iD: number) { 
+    const user = await this.prisma.user.findUnique({where: { iD },})
+    if(!user) throw new HttpException('User not found', 404);
+    return user
   }
   
 }
